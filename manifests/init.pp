@@ -6,7 +6,7 @@
 
 class securefile {
 
-    $real_e_mount_source = $e_mount_source {
+    $real_e_mount_source = $e_mount_source ? {
         '' => "/dev/xvdb3",
         default => $e_mount_source
     }
