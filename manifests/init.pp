@@ -23,6 +23,7 @@ class securefile {
         atboot  => true,
         device  => $e_mount_source,
         ensure  => mounted,
+        fstype  => ext3,
         options => 'nodev',
         require => File["/e"],
     } 
