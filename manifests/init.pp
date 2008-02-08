@@ -27,8 +27,8 @@ class securefile {
         require => File["/e"],
     } 
 
-    file{"/e/.issecure":
-        source  => 'puppet://$server/securefile/issecure',
+    file{'/e/.issecure':
+        source  => "puppet://$server/securefile/issecure",
         owner   => root,
         group   => 0,
         mode    => 0644,
