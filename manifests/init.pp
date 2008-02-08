@@ -42,8 +42,7 @@ define securefile::deploy(
     $path,
     $owner = 'root',
     $group = '0',
-    $mode = '0640',
-    $require = ''
+    $mode = '0640'
 ){
     include securefile
     file{$name:
@@ -53,6 +52,6 @@ define securefile::deploy(
         group => $group,
         mode => $mode,
         ensure => present,
-        require => [ File["/e/.issecure"], $require ],
+        require => [ File["/e/.issecure"] ],
     }
 }
