@@ -41,7 +41,7 @@ define securefile::deploy(
     $path,
     $owner = 'root',
     $group = '0',
-    $mode => '0640'
+    $mode = '0640'
 ){
     include securefile
     file{$name:
