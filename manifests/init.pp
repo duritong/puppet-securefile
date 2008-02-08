@@ -21,7 +21,7 @@ class securefile {
    mount{"e_disk":
         name    => '/e',
         atboot  => true,
-        device  => $e_mount_source,
+        device  => $real_e_mount_source,
         ensure  => mounted,
         fstype  => ext3,
         options => 'nodev',
