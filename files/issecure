@@ -1,0 +1,3 @@
+### file managed by puppet ####
+# this file should ensure that a crypted disk is mounted!
+# don't remove it
