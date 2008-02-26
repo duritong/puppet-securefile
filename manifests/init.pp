@@ -18,7 +18,7 @@ class securefile {
         mode => 0755,
    }
     
-   selinux::module {"securefile":}
+   selinux::module {"aa_securefile":}
 
    mount{"e_disk":
         name    => '/e',
