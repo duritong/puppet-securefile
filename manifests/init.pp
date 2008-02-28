@@ -11,7 +11,7 @@ class securefile {
         default => $e_mount_source
     }
 
-    $real_secure_fs_tpye = $secure_fs_type ? {
+    $real_secure_fs_type = $secure_fs_type ? {
         '' => 'ext3',
         default => $secure_fs_type
     }
