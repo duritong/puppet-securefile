@@ -54,7 +54,7 @@ define securefile::deploy(
     include securefile
 
     if $require {
-        $real_equire  = [ File["/e/.issecure"], $require]
+        $real_require  = [ File["/e/.issecure"], $require]
     } else {
         $real_require =  File["/e/.issecure"]
     }
