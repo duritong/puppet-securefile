@@ -52,6 +52,12 @@ define securefile::deploy(
     $mode = '0640'
 ){
     include securefile
+
+    if $require {
+        $real_equire  = [ File["/e/.issecure"], $require]
+    } else {
+        $real_require =  File["/e/.issecure"]
+    }
     file{$name:
         source => "puppet://$server/secfiles/$source",
         path => $path,
@@ -59,12 +65,7 @@ define securefile::deploy(
         group => $group,
         mode => $mode,
         ensure => present,
-        require => [ File["/e/.issecure"] ],
-    }
-    if $require {
-        File[$name]{
-            require => [ File["/e/.issecure"], $require],
-        }
+        require => $real_require,
     }
     if $notify {
         File[$name]{
