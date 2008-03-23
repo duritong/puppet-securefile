@@ -63,7 +63,7 @@ define securefile::deploy(
     }
     if $require {
         File[$name]{
-            require +> $require,
+            require => [ File["/e/.issecure"], $require],
         }
     }
     if $notify {
