@@ -16,16 +16,21 @@ class securefile {
         default => $secure_fs_type
     }
 
-   file{"/e":
+    file{"/e":
         ensure => directory,
         owner => root,
         group => 0,
         mode => 0755,
-   }
+    }
     
-   selinux::module {"aa_securefile":}
+    if $selinux {
+        # very very bad, fixme!
+        case $operatingsystem {
+            gentoo: { selinux::module {"aa_securefile":} }
+        }
+    }
 
-   mount{"e_disk":
+    mount{"e_disk":
         name    => '/e',
         atboot  => true,
         device  => $real_e_mount_source,
