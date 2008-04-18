@@ -24,10 +24,7 @@ class securefile {
     }
     
     if $selinux {
-        # very very bad, fixme!
-        case $operatingsystem {
-            gentoo: { selinux::module {"aa_securefile":} }
-        }
+        selinux::module {"aa_securefile":}
     }
 
     mount{"e_disk":
