@@ -24,7 +24,7 @@ class securefile {
     }
     
     if $selinux {
-        selinux::module {"aa_securefile":}
+        selinux::module {"extension_securefile":}
     }
 
     mount{"e_disk":
