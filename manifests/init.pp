@@ -10,6 +10,10 @@ class securefile {
         '' => "/dev/xvdb3",
         default => $e_mount_source
     }
+    $real_e_mount_atboot = $e_mount_atboot ? {
+        '' => true,
+        default => $e_mount_atboot
+    }
 
     $real_secure_fs_type = $secure_fs_type ? {
         '' => 'ext3',
@@ -29,7 +33,7 @@ class securefile {
 
     mount{"e_disk":
         name    => '/e',
-        atboot  => true,
+        atboot  => $real_e_mount_atboot,
         device  => $real_e_mount_source,
         ensure  => mounted,
         fstype  => $real_secure_fs_type,
