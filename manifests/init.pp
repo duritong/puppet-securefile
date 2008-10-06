@@ -67,7 +67,7 @@ define securefile::deploy(
 
     file{$name:
         source => "puppet://$server/secfiles/$source",
-        path => $path,
+        path => "/e/$path",
         owner => $owner,
         group => $group,
         mode => $mode,
