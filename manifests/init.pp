@@ -52,7 +52,7 @@ class securefile {
 
 define securefile::deploy(
     $source,
-    $path,
+    $path = 'absent',
     $owner = 'root',
     $group = '0',
     $mode = '0640'
@@ -65,9 +65,14 @@ define securefile::deploy(
         $real_require =  File['/e/.issecure']
     }
 
+    $real_path = $path ? {
+        'absent' => $name,
+        default => $path,
+    }
+
     file{$name:
         source => "puppet://$server/secfiles/$source",
-        path => "/e/$path",
+        path => "/e/$real_path",
         owner => $owner,
         group => $group,
         mode => $mode,
