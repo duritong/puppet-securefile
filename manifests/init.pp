@@ -15,9 +15,19 @@ class securefile {
         default => $e_mount_atboot
     }
 
-    $real_secure_fs_type = $secure_fs_type ? {
-        '' => 'ext3',
-        default => $secure_fs_type
+    $real_e_mount_fstype = $e_mount_fstype ? {
+        '' => $operatingsystem ? {
+            openbsd => 'ffs',
+            default => 'ext3'
+        },
+        default => $e_mount_fstype
+    }
+    $real_e_mount_options = $e_mount_options ? {
+        '' => $operatingsystem ? {
+            openbsd => 'local, nodev, nosuid',
+            default => 'nodev'
+        },
+        default => $e_mount_options,
     }
 
     file{"/e":
@@ -36,8 +46,8 @@ class securefile {
         atboot  => $real_e_mount_atboot,
         device  => $real_e_mount_source,
         ensure  => mounted,
-        fstype  => $real_secure_fs_type,
-        options => 'nodev',
+        fstype  => $real_e_mount_fstype,
+        options => $real_e_mount_options,
         require => File["/e"],
     } 
 
