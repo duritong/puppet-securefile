@@ -24,7 +24,7 @@ class securefile {
     }
     $real_e_mount_options = $e_mount_options ? {
         '' => $operatingsystem ? {
-            openbsd => 'local, nodev, nosuid',
+            openbsd => 'rw,nodev,nosuid',
             default => 'nodev'
         },
         default => $e_mount_options,
