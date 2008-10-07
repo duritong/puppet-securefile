@@ -48,6 +48,10 @@ class securefile {
         ensure  => mounted,
         fstype  => $real_e_mount_fstype,
         options => $real_e_mount_options,
+        remounts => $operatingsystem ? {
+            openbsd => false,
+            default => true
+        },
         require => File["/e"],
     } 
 
