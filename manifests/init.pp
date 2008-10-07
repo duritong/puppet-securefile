@@ -10,11 +10,6 @@ class securefile {
         '' => "/dev/xvdb3",
         default => $e_mount_source
     }
-    $real_e_mount_atboot = $e_mount_atboot ? {
-        '' => true,
-        default => $e_mount_atboot
-    }
-
     $real_e_mount_fstype = $e_mount_fstype ? {
         '' => $operatingsystem ? {
             openbsd => 'ffs',
@@ -43,7 +38,6 @@ class securefile {
 
     mount{"e_disk":
         name    => '/e',
-        atboot  => $real_e_mount_atboot,
         device  => $real_e_mount_source,
         ensure  => mounted,
         fstype  => $real_e_mount_fstype,
@@ -54,6 +48,20 @@ class securefile {
         },
         require => File["/e"],
     } 
+
+    case $operatingsystem {
+        openbsd: { info("openbsd doesn't yet support atboot") }
+        default: {
+            $real_e_mount_atboot = $e_mount_atboot ? {
+                '' => true,
+                default => $e_mount_atboot
+            }
+
+            Mount['e_disk']{
+                atboot  => $real_e_mount_atboot,
+            }
+        }
+    }
 
     file{'/e/.issecure':
         source  => "puppet://$server/securefile/issecure",
