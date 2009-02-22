@@ -36,7 +36,7 @@ class securefile {
         selinux::module {"extension_securefile":}
     }
 
-    mount{'/e',
+    mount{'/e':
         device  => $real_e_mount_source,
         ensure  => mounted,
         fstype  => $real_e_mount_fstype,
