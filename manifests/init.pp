@@ -36,8 +36,7 @@ class securefile {
         selinux::module {"extension_securefile":}
     }
 
-    mount{"e_disk":
-        name    => '/e',
+    mount{'/e',
         device  => $real_e_mount_source,
         ensure  => mounted,
         fstype  => $real_e_mount_fstype,
@@ -57,7 +56,7 @@ class securefile {
                 default => $e_mount_atboot
             }
 
-            Mount['e_disk']{
+            Mount['/e']{
                 atboot  => $real_e_mount_atboot,
             }
         }
@@ -68,7 +67,7 @@ class securefile {
         owner   => root,
         group   => 0,
         mode    => 0644,
-        require => Mount["e_disk"]
+        require => Mount["/e"]
     }
 }
 
