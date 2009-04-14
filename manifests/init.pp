@@ -73,7 +73,9 @@ class securefile {
     }
 
     if $e_mount_source == 'fake' {
-        require => undef,
+        File['/e/.issecure']{
+            require => undef,
+        }
     }
 }
 
