@@ -16,6 +16,11 @@ class securefile {
     }
 
 
+    file{'/e/.issecure':
+        source  => "puppet://$server/securefile/issecure",
+        owner => root, group => 0, mode => 0644;
+    }
+
     if $e_mount_source != 'fake' {
 
         $real_e_mount_source = $e_mount_source ? {
@@ -61,20 +66,9 @@ class securefile {
                     atboot  => $real_e_mount_atboot,
                 }
              }
-         }
-    }
-
-    file{'/e/.issecure':
-        source  => "puppet://$server/securefile/issecure",
-        owner   => root,
-        group   => 0,
-        mode    => 0644,
-        require => Mount["/e"]
-    }
-
-    if $e_mount_source == 'fake' {
+        }
         File['/e/.issecure']{
-            require => undef,
+            require => Mount["/e"]
         }
     }
 }
