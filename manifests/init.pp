@@ -2,28 +2,7 @@
 # Copyright (C) 2007 admin@immerda.ch
 #
 
-# modules_dir { "securefile": }
-
 class securefile {
-
-    $real_e_mount_source = $e_mount_source ? {
-        '' => "/dev/xvdb3",
-        default => $e_mount_source
-    }
-    $real_e_mount_fstype = $e_mount_fstype ? {
-        '' => $operatingsystem ? {
-            openbsd => 'ffs',
-            default => 'ext3'
-        },
-        default => $e_mount_fstype
-    }
-    $real_e_mount_options = $e_mount_options ? {
-        '' => $operatingsystem ? {
-            openbsd => 'rw,nodev,nosuid',
-            default => 'nodev'
-        },
-        default => $e_mount_options,
-    }
 
     file{"/e":
         ensure => directory,
@@ -31,35 +10,58 @@ class securefile {
         group => 0,
         mode => 0755,
     }
-    
+
     if $selinux {
         selinux::module {"extension_securefile":}
     }
 
-    mount{'/e':
-        device  => $real_e_mount_source,
-        ensure  => mounted,
-        fstype  => $real_e_mount_fstype,
-        options => $real_e_mount_options,
-        remounts => $operatingsystem ? {
-            openbsd => false,
-            default => true
-        },
-        require => File["/e"],
-    } 
 
-    case $operatingsystem {
-        openbsd: { info("openbsd doesn't yet support atboot") }
-        default: {
-            $real_e_mount_atboot = $e_mount_atboot ? {
-                '' => true,
-                default => $e_mount_atboot
-            }
+    if $e_mount_source != 'fake' {
 
-            Mount['/e']{
-                atboot  => $real_e_mount_atboot,
-            }
+        $real_e_mount_source = $e_mount_source ? {
+            '' => "/dev/xvdb3",
+            default => $e_mount_source
         }
+        $real_e_mount_fstype = $e_mount_fstype ? {
+            '' => $operatingsystem ? {
+                openbsd => 'ffs',
+                default => 'ext3'
+            },
+            default => $e_mount_fstype
+        }
+        $real_e_mount_options = $e_mount_options ? {
+            '' => $operatingsystem ? {
+                openbsd => 'rw,nodev,nosuid',
+                default => 'nodev'
+            },
+            default => $e_mount_options,
+        }
+
+        mount{'/e':
+            device  => $real_e_mount_source,
+            ensure  => mounted,
+            fstype  => $real_e_mount_fstype,
+            options => $real_e_mount_options,
+            remounts => $operatingsystem ? {
+                openbsd => false,
+                default => true
+            },
+            require => File["/e"],
+        }
+
+        case $operatingsystem {
+            openbsd: { info("openbsd doesn't yet support atboot") }
+            default: {
+                $real_e_mount_atboot = $e_mount_atboot ? {
+                    '' => true,
+                    default => $e_mount_atboot
+                }
+
+                Mount['/e']{
+                    atboot  => $real_e_mount_atboot,
+                }
+             }
+         }
     }
 
     file{'/e/.issecure':
@@ -68,6 +70,10 @@ class securefile {
         group   => 0,
         mode    => 0644,
         require => Mount["/e"]
+    }
+
+    if $e_mount_source == 'fake' {
+        require => undef,
     }
 }
 
