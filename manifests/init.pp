@@ -11,11 +11,6 @@ class securefile {
         mode => 0755,
     }
 
-    if $selinux {
-        selinux::module {"extension_securefile":}
-    }
-
-
     file{'/e/.issecure':
         source  => "puppet://$server/securefile/issecure",
         owner => root, group => 0, mode => 0644;
