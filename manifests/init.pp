@@ -12,7 +12,7 @@ class securefile {
     }
 
     file{'/e/.issecure':
-        source  => "puppet://$server/securefile/issecure",
+        source  => "puppet://$server/modules/securefile/issecure",
         owner => root, group => 0, mode => 0644;
     }
 
