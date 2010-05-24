@@ -16,6 +16,7 @@ class securefile {
         owner => root, group => 0, mode => 0644;
     }
 
+    mount{'/e': }
     if $e_mount_source != 'fake' {
 
         $real_e_mount_source = $e_mount_source ? {
@@ -37,7 +38,7 @@ class securefile {
             default => $e_mount_options,
         }
 
-        mount{'/e':
+        Mount['/e']{
             device  => $real_e_mount_source,
             ensure  => mounted,
             fstype  => $real_e_mount_fstype,
@@ -65,5 +66,9 @@ class securefile {
         File['/e/.issecure']{
             require => Mount["/e"]
         }
+    } else {
+      Mount['/e']{
+        ensure => absent
+      }
     }
 }
