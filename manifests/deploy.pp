@@ -19,7 +19,7 @@ define securefile::deploy(
     }
 
     file{$name:
-        source => "puppet://$server/modules/site-securefile/$source",
+        source => "puppet:///modules/site-securefile/$source",
         path => "/e/$real_path",
         owner => $owner,
         group => $group,
