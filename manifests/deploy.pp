@@ -1,16 +1,14 @@
 define securefile::deploy(
-  $source,
+  $source = 'absent',
+  $content = 'absent',
+  $ensure = 'present',
   $path = 'absent',
   $owner = 'root',
   $group = '0',
   $mode = '0640'
 ){
-  include ::securefile
-
-  if $require {
-    $real_require  = [ File['/e/.issecure'], $require]
-  } else {
-    $real_require =  File['/e/.issecure']
+  if ($source == 'absent') and ($content == 'absent') and ($ensure == 'present'){
+    fail("Source or content must be set if ${name} should be present!")
   }
 
   $real_path = $path ? {
@@ -19,22 +17,26 @@ define securefile::deploy(
   }
 
   file{$name:
-    source => "puppet:///modules/site-securefile/$source",
     path => "/e/$real_path",
-    owner => $owner,
-    group => $group,
-    mode => $mode,
-    ensure => present,
-    require => $real_require,
+    ensure => $ensure,
   }
-  if $notify {
+
+  if $ensure == 'present' {
+    include ::securefile
+
     File[$name]{
-      notify => $notify,
+      require => File['/e/.issecure'],
+      owner => $owner, group => $group, mode => $mode
     }
-  }
-  if $before {
-    File[$name]{
-      before => $before,
+
+    if $source != 'absent' {
+      File[$name]{
+        source => "puppet:///modules/site-securefile/$source",
+      }
+    } else {
+      File[$name]{
+        content => $content,
+      }
     }
   }
 }
