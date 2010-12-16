@@ -1,40 +1,40 @@
 define securefile::deploy(
-    $source,
-    $path = 'absent',
-    $owner = 'root',
-    $group = '0',
-    $mode = '0640'
+  $source,
+  $path = 'absent',
+  $owner = 'root',
+  $group = '0',
+  $mode = '0640'
 ){
-    include ::securefile
+  include ::securefile
 
-    if $require {
-        $real_require  = [ File['/e/.issecure'], $require]
-    } else {
-        $real_require =  File['/e/.issecure']
-    }
+  if $require {
+    $real_require  = [ File['/e/.issecure'], $require]
+  } else {
+    $real_require =  File['/e/.issecure']
+  }
 
-    $real_path = $path ? {
-        'absent' => $name,
-        default => $path,
-    }
+  $real_path = $path ? {
+    'absent' => $name,
+    default => $path,
+  }
 
-    file{$name:
-        source => "puppet:///modules/site-securefile/$source",
-        path => "/e/$real_path",
-        owner => $owner,
-        group => $group,
-        mode => $mode,
-        ensure => present,
-        require => $real_require,
+  file{$name:
+    source => "puppet:///modules/site-securefile/$source",
+    path => "/e/$real_path",
+    owner => $owner,
+    group => $group,
+    mode => $mode,
+    ensure => present,
+    require => $real_require,
+  }
+  if $notify {
+    File[$name]{
+      notify => $notify,
     }
-    if $notify {
-        File[$name]{
-            notify => $notify,
-        }
+  }
+  if $before {
+    File[$name]{
+      before => $before,
     }
-    if $before {
-        File[$name]{
-            before => $before,
-        }
-    }
+  }
 }
