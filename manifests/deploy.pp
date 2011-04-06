@@ -5,7 +5,8 @@ define securefile::deploy(
   $path = 'absent',
   $owner = 'root',
   $group = '0',
-  $mode = '0640'
+  $mode = '0640',
+  $seltype = 'absent'
 ){
   if ($source == 'absent') and ($content == 'absent') and ($ensure == 'present'){
     fail("Source or content must be set if ${name} should be present!")
@@ -27,6 +28,12 @@ define securefile::deploy(
     File[$name]{
       require => File['/e/.issecure'],
       owner => $owner, group => $group, mode => $mode
+    }
+
+    if $seltype != 'absent' {
+      File[$name]{
+        seltype => $seltype
+      }
     }
 
     if $source != 'absent' {
