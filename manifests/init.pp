@@ -29,7 +29,7 @@ class securefile {
     $real_e_mount_fstype = $e_mount_fstype ? {
       '' => $operatingsystem ? {
         openbsd => 'ffs',
-        default => 'ext3'
+        default => hiera('e_mount_fstype','ext3')
       },
       default => $e_mount_fstype
     }
