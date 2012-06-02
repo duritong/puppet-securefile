@@ -18,7 +18,7 @@ define securefile::deploy(
   }
 
   file{$name:
-    path => "/e/$real_path",
+    path => "/e/${real_path}",
     ensure => $ensure,
   }
 
@@ -38,7 +38,7 @@ define securefile::deploy(
 
     if $source != 'absent' {
       File[$name]{
-        source => "puppet:///modules/site-securefile/$source",
+        source => "puppet:///modules/site_securefile/${source}",
       }
     } else {
       File[$name]{
