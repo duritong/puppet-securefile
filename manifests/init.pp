@@ -1,4 +1,9 @@
-class securefile {
+class securefile(
+  $mount_source = '/dev/xvdb3',
+  $fstype = 'absent',
+  $mount_options = 'absent',
+  $mount_atboot = true
+) {
 
   file{"/e":
     ensure => directory,
@@ -17,7 +22,7 @@ class securefile {
   }
 
   mount{'/e': }
-  if hiera('e_mount_source','/dev/xvdb3') != 'fake' {
+  if $mount_source != 'fake' {
     $def_fs =  $::operatingsystem ? {
         openbsd => 'ffs',
         default => 'ext3'
@@ -28,10 +33,16 @@ class securefile {
     }
 
     Mount['/e']{
-      device  => hiera('e_mount_source','/dev/xvdb3'),
+      device  => $mount_source,
       ensure  => mounted,
-      fstype  => hiera('e_mount_fstype',$def_fs),
-      options => hiera('e_mount_options',$def_mount_options),
+      fstype  => $fstype ? {
+        'absent' => $def_fs,
+        default => $fstype
+      },
+      options => $mount_options ? {
+        'absent' => $def_mount_options,
+        default => $mount_options
+      },
       remounts => $::operatingsystem ? {
         openbsd => false,
         default => true
@@ -43,7 +54,7 @@ class securefile {
       openbsd: { }
       default: {
         Mount['/e']{
-          atboot  => hiera('e_mount_atboot',true)
+          atboot  => $mount_atboot
         }
       }
     }

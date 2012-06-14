@@ -23,8 +23,6 @@ define securefile::deploy(
   }
 
   if $ensure == 'present' {
-    include ::securefile
-
     File[$name]{
       require => File['/e/.issecure'],
       owner => $owner, group => $group, mode => $mode
