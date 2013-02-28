@@ -1,13 +1,23 @@
+# manage a location where
+# we are mounting an encrypted drive
 class securefile(
-  $mount_source = '/dev/xvdb3',
-  $fstype = 'absent',
-  $mount_options = 'absent',
-  $mount_atboot = true
+  $mount_source   = '/dev/xvdb3',
+  $fstype         = 'absent',
+  $mount_options  = 'absent',
+  $mount_atboot   = true
 ) {
 
-  file{"/e":
-    ensure => directory,
-    owner => root, group => 0, mode => 0755;
+  file{
+    '/e':
+      ensure  => directory,
+      owner   => root,
+      group   => 0,
+      mode    => '0644';
+    '/e/.issecure':
+      content => "### file managed by puppet ####\n# this file should ensure that a crypted disk is mounted!\n# don't remove it\n",
+      owner   => root,
+      group   => 0,
+      mode    => '0644';
   }
 
   if $::selinux == 'true' {
@@ -16,38 +26,35 @@ class securefile(
     }
   }
 
-  file{'/e/.issecure':
-    content => "### file managed by puppet ####\n# this file should ensure that a crypted disk is mounted!\n# don't remove it\n",
-    owner => root, group => 0, mode => 0644;
-  }
-
   mount{'/e': }
   if $mount_source != 'fake' {
     $def_fs =  $::operatingsystem ? {
         openbsd => 'ffs',
         default => 'ext3'
     }
-    $def_mount_options = $::operatingsystem ? {
-      openbsd => 'rw,nodev,nosuid',
-      default => 'nodev'
+    $real_mount_options = $mount_options ? {
+      'absent' => $::operatingsystem ? {
+        openbsd => 'rw,nodev,nosuid',
+        default => 'nodev',
+      },
+      default => $mount_options
+    }
+    $real_fstype = $fstype ? {
+      'absent' => $def_fs,
+      default => $fstype
+    }
+    $remounts = $::operatingsystem ? {
+      openbsd => false,
+      default => true
     }
 
     Mount['/e']{
-      device  => $mount_source,
-      ensure  => mounted,
-      fstype  => $fstype ? {
-        'absent' => $def_fs,
-        default => $fstype
-      },
-      options => $mount_options ? {
-        'absent' => $def_mount_options,
-        default => $mount_options
-      },
-      remounts => $::operatingsystem ? {
-        openbsd => false,
-        default => true
-      },
-      require => File["/e"],
+      device    => $mount_source,
+      ensure    => mounted,
+      fstype    => $real_fstype,
+      options   => $real_mount_options,
+      remounts  => $remounts,
+      require   => File['/e'],
     }
 
     case $::operatingsystem {
@@ -59,7 +66,7 @@ class securefile(
       }
     }
     File['/e/.issecure']{
-      require => Mount["/e"]
+      require => Mount['/e']
     }
   } else {
     Mount['/e']{
