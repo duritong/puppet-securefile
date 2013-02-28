@@ -12,7 +12,7 @@ class securefile(
 
   if $::selinux == 'true' {
     File['/e']{
-      seltype => 'cert_t'
+      seltype => 'default_t'
     }
   }
 
