@@ -30,7 +30,7 @@ class securefile(
   if $mount_source != 'fake' {
     $def_fs =  $::operatingsystem ? {
         openbsd => 'ffs',
-        default => 'ext3'
+        default => 'ext4'
     }
     $real_mount_options = $mount_options ? {
       'absent' => $::operatingsystem ? {
