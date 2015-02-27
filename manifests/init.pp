@@ -14,13 +14,15 @@ class securefile(
       group   => 0,
       mode    => '0644';
     '/e/.issecure':
-      content => "### file managed by puppet ####\n# this file should ensure that a crypted disk is mounted!\n# don't remove it\n",
+      content => "### file managed by puppet ####
+# this file should ensure that a crypted disk is mounted!
+# don't remove it\n",
       owner   => root,
       group   => 0,
       mode    => '0644';
   }
 
-  if $::selinux == 'true' {
+  if str2bool($::selinux) {
     File['/e']{
       seltype => 'default_t'
     }
@@ -29,13 +31,13 @@ class securefile(
   mount{'/e': }
   if $mount_source != 'fake' {
     $def_fs =  $::operatingsystem ? {
-        openbsd => 'ffs',
-        default => 'ext4'
+      'OpenBSD'=> 'ffs',
+      default  => 'ext4'
     }
     $real_mount_options = $mount_options ? {
       'absent' => $::operatingsystem ? {
-        openbsd => 'rw,nodev,nosuid',
-        default => 'nodev',
+        'OpenBSD' => 'rw,nodev,nosuid',
+        default   => 'nodev',
       },
       default => $mount_options
     }
@@ -44,8 +46,8 @@ class securefile(
       default => $fstype
     }
     $remounts = $::operatingsystem ? {
-      openbsd => false,
-      default => true
+      'OpenBSD' => false,
+      default   => true
     }
 
     Mount['/e']{
@@ -58,7 +60,7 @@ class securefile(
     }
 
     case $::operatingsystem {
-      openbsd: { }
+      'OpenBSD': { }
       default: {
         Mount['/e']{
           atboot  => $mount_atboot
