@@ -1,11 +1,12 @@
+# deploys a file under the "secure" path
 define securefile::deploy(
-  $source = 'absent',
+  $source  = 'absent',
   $content = 'absent',
-  $ensure = 'present',
-  $path = 'absent',
-  $owner = 'root',
-  $group = '0',
-  $mode = '0640',
+  $ensure  = 'present',
+  $path    = 'absent',
+  $owner   = 'root',
+  $group   = '0',
+  $mode    = '0640',
   $seltype = 'absent'
 ){
   if ($source == 'absent') and ($content == 'absent') and ($ensure == 'present'){
@@ -18,8 +19,8 @@ define securefile::deploy(
   }
 
   file{$name:
-    path => "/e/${real_path}",
     ensure => $ensure,
+    path   => "/e/${real_path}",
   }
   if $name != "/e/${real_path}" {
     File[$name]{
@@ -30,7 +31,9 @@ define securefile::deploy(
   if $ensure == 'present' {
     File[$name]{
       require => File['/e/.issecure'],
-      owner => $owner, group => $group, mode => $mode
+      owner   => $owner,
+      group   => $group,
+      mode    => $mode
     }
 
     if $seltype != 'absent' {
