@@ -18,18 +18,17 @@ define securefile::deploy(
     default  => $path,
   }
 
-  file{$name:
+  file{"/e/${real_path}":
     ensure => $ensure,
-    path   => "/e/${real_path}",
   }
   if $name != "/e/${real_path}" {
-    File[$name]{
-      alias => "/e/${real_path}"
+    File["/e/${real_path}"]{
+      alias => $name,
     }
   }
 
   if $ensure == 'present' {
-    File[$name]{
+    File["/e/${real_path}"]{
       require => File['/e/.issecure'],
       owner   => $owner,
       group   => $group,
@@ -37,17 +36,17 @@ define securefile::deploy(
     }
 
     if $seltype != 'absent' {
-      File[$name]{
+      File["/e/${real_path}"]{
         seltype => $seltype
       }
     }
 
     if $source != 'absent' {
-      File[$name]{
+      File["/e/${real_path}"]{
         source => "puppet:///modules/site_securefile/${source}",
       }
     } else {
-      File[$name]{
+      File["/e/${real_path}"]{
         content => $content,
       }
     }
