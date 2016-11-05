@@ -15,7 +15,7 @@ define securefile::deploy(
 
   $real_path = $path ? {
     'absent' => $name,
-    default => $path,
+    default  => $path,
   }
 
   file{$name:
