@@ -21,6 +21,11 @@ define securefile::deploy(
     path => "/e/${real_path}",
     ensure => $ensure,
   }
+  if $name != "/e/${real_path}" {
+    File[$name]{
+      alias => "/e/${real_path}"
+    }
+  }
 
   if $ensure == 'present' {
     File[$name]{
